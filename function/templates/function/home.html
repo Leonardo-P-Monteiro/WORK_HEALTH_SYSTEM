@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Página Inicial - Sistema Interno{% endblock title %}
+
+{% block content %}
+
+    {% if is_first_load %}
+        {% include "function/partials/_first_search.html" %}
+    {% elif page_obj %} {# Exibe os cards se houver resultados na busca #}
+        <div class="row g-4">
+            {% for f in page_obj %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <a href="#"><i class="fas fa-user"></i></a>
+                                <h5 class="card-title"><a href= {{ f.get_absolute_url }} class="card-title-link">{{ f.name }}</a></h5>
+                            </div>
+                            <h6 class="card-subtitle text-muted">CBO: {{ f.cbo }}</h6>
+                            <p class="card-text">{{ f.description }}</p>
+                            <div class="text-center mt-3">
+                                <a href="{{ f.get_absolute_url }}" class="btn btn-success">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% include "partials/_pagination.html" %}
+
+    {% else %} {# Exibe a mensagem de sem resultados se a busca não retornar nada #}
+        {% include "function/partials/_noresults.html" %}
+    {% endif %}
+    
+{% endblock content %}
+
+
+{% block scripts %}
+    {# Adicionar JS específico para esta página, se necessário #}
+    <script>
+        console.log("Página de Index carregada!");
+    </script>
+{% endblock scripts %}

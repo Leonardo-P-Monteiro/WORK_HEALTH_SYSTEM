@@ -1,0 +1,47 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container navbar-container">
+        <a class="navbar-brand" href="#">
+            <img class="navbar-logo" src="{% static 'images/acesso_logo.webp' %}" alt="Logo da Empresa">
+        </a>
+        
+        <div class="navbar-links">
+            {# Substituir '#' pelos URLs corretos usando {% url 'nome_da_url' %} #}
+            <a class="nav-link" href="{% url "function:home" %}">Página Inicial</a> 
+            <a class="nav-link" href="https://www.acessonacional.com.br/">Site Institucional</a> 
+            <a class="nav-link" href="{% url "function:logout" %}">Logout</a> 
+            <a class="nav-link" href="{% url "function:home" %}"> Usuário logado: {{ user.username }}</a> 
+        </div>
+    </div>
+</nav>
+
+
+<form action="{% url "function:search" %}" method='get'>
+    <div class="search-bar">
+        <div class="container">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="search" name='q' value="{{ q }}" class="search-input" placeholder="Pesquisar funções...">
+                <button type='submit' class="search-button">Buscar</button>
+                {# NOVO BOTÃO: Compêndio #}
+                {# Adicionado ao lado direito do botão "Buscar", com a mesma classe de estilo. #}
+                {# O 'ms-2' adiciona um espaçamento à esquerda usando classes do Bootstrap. #}
+                <a style="text-decoration: none;" href="{% url 'function:compendium' %}" class="search-button ms-2">Compêndio</a>
+            </div>
+        </div>
+        {% if function %}
+            <div class="breadcrumb-container">
+                <div class="container">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url "function:home" %}">Página Inicial</a></li>
+                            {% if function %}
+                                <li class="breadcrumb-item active" aria-current="page">{{ function.name }}</li>
+                            {% endif %}
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</form>

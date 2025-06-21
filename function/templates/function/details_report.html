@@ -1,0 +1,921 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ function.name }} | Página de Detalhes {% endblock title %}
+
+{% block extra_head %}
+<style>
+    @media print {
+        /* Configurações gerais da página */
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+
+        /* Configurações do corpo */
+        body {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 9pt !important;
+            line-height: 1.2 !important;
+            background: white !important;
+            color: black !important;
+        }
+
+        /* Cabeçalho da função */
+        .function-header {
+            margin-bottom: 1.5cm !important;
+            page-break-inside: avoid !important;
+        }
+
+        .function-title {
+            font-size: 14pt !important;
+            margin-bottom: 0.2cm !important;
+        }
+
+        /* Cards de detalhes */
+        .details-card {
+            margin-bottom: 0.5cm !important;
+            page-break-inside: avoid !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: white !important;
+            break-inside: avoid !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .details-card-title {
+            font-size: 12pt !important;
+            margin-bottom: 0.3cm !important;
+            color: black !important;
+            break-after: avoid !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        .details-card-body {
+            break-before: avoid !important;
+            break-inside: avoid !important;
+            display: flex !important;
+            flex-direction: column !important;
+            margin-top: 0 !important;
+            page-break-before: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        /* Tabelas */
+        .risk-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin-bottom: 0.5cm !important;
+            break-inside: avoid !important;
+            display: table !important;
+            margin-top: 0 !important;
+            page-break-inside: avoid !important;
+        }
+
+        .risk-table th,
+        .risk-table td {
+            border: 1px solid #000 !important;
+            padding: 0.1cm !important;
+            font-size: 8pt !important;
+        }
+
+        .risk-table th {
+            background-color: #f0f0f0 !important;
+            font-weight: bold !important;
+        }
+
+        /* Elementos a serem ocultados */
+        .navbar,
+        .footer,
+        .action-buttons,
+        .btn-voltar,
+        #print-report,
+        .search-bar,
+        .breadcrumb-container,
+        .return-button {
+            display: none !important;
+        }
+
+        /* Controle de quebra de página */
+        .print-section {
+            page-break-inside: avoid !important;
+        }
+
+        /* Melhora a legibilidade do texto */
+        p, span, td, th {
+            color: black !important;
+        }
+
+        /* Garante que imagens e ícones sejam impressos */
+        img, .fas, .fab {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Regras específicas para manter títulos e conteúdo juntos */
+        .details-card {
+            break-inside: avoid !important;
+            display: flex !important;
+            flex-direction: column !important;
+            margin-bottom: 1cm !important;
+        }
+
+        .details-card-body {
+            break-before: avoid !important;
+            break-inside: avoid !important;
+            display: flex !important;
+            flex-direction: column !important;
+            margin-top: 0 !important;
+            page-break-before: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        .details-card-title {
+            break-after: avoid !important;
+            margin-bottom: 0.3cm !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        /* Força agrupamento de subtítulos com suas tabelas */
+        .details-subtitle {
+            break-after: avoid !important;
+            margin-bottom: 0.2cm !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        /* Mantém o conteúdo da tabela junto */
+        .risk-content {
+            break-before: avoid !important;
+            break-inside: avoid !important;
+            display: table !important;
+            page-break-before: avoid !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 0.5cm !important;
+        }
+
+        /* Garante que a tabela fique junto com seu conteúdo */
+        .risk-table {
+            break-inside: avoid !important;
+            display: table !important;
+            margin-top: 0 !important;
+            page-break-inside: avoid !important;
+            width: 100% !important;
+        }
+
+        /* Força agrupamento dentro das seções de risco */
+        .risk-section {
+            break-inside: avoid !important;
+            display: block !important;
+            page-break-inside: avoid !important;
+        }
+
+        /* Força todos os elementos de tabela a ficarem juntos */
+        thead {
+            display: table-header-group !important;
+        }
+
+        tbody {
+            display: table-row-group !important;
+        }
+
+        tr {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        /* Ajuste específico para exames ocupacionais */
+        .details-card-body h3.details-subtitle:first-of-type {
+            margin-top: 0 !important;
+        }
+
+        /* Força contenção dentro do card */
+        .details-card > * {
+            contain: layout !important;
+        }
+
+        /* Ajustes específicos para cards e conteúdo */
+        .details-card {
+            display: block !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 20px !important;
+            background-color: white !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .details-card-title {
+            page-break-after: avoid !important;
+            margin-bottom: 10px !important;
+            color: black !important;
+            font-size: 14pt !important;
+        }
+
+        .details-card-body {
+            display: block !important;
+            page-break-before: avoid !important;
+            page-break-inside: auto !important;
+        }
+
+        /* Ajustes para seções de risco */
+        .risk-section {
+            display: block !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 15px !important;
+        }
+
+        .details-subtitle {
+            page-break-after: avoid !important;
+            margin-bottom: 5px !important;
+            font-size: 12pt !important;
+        }
+
+        /* Ajustes específicos para tabelas */
+        .risk-content {
+            display: block !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 15px !important;
+        }
+
+        .risk-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            page-break-inside: auto !important;
+            margin-bottom: 15px !important;
+        }
+
+        .risk-table thead {
+            display: table-header-group !important;
+        }
+
+        .risk-table tbody {
+            display: table-row-group !important;
+        }
+
+        .risk-table tr {
+            page-break-inside: avoid !important;
+        }
+
+        .risk-table th,
+        .risk-table td {
+            border: 1px solid #000 !important;
+            padding: 4px 8px !important;
+            font-size: 10pt !important;
+            color: black !important;
+        }
+
+        /* Ajustes de espaçamento */
+        .details-card + .details-card {
+            margin-top: 20px !important;
+        }
+
+        /* Garante que elementos não se sobreponham */
+        * {
+            overflow: visible !important;
+        }
+
+        /* Remove flexbox para evitar problemas de layout na impressão */
+        .details-content,
+        .row,
+        .col-12 {
+            display: block !important;
+            width: 100% !important;
+        }
+
+        /* Ajustes específicos para o card de exames */
+        .details-card {
+            display: block !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            margin-bottom: 20px !important;
+        }
+
+        /* Mantem o título do card junto com o conteúdo */
+        .details-card-title {
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+            margin-bottom: 15px !important;
+        }
+
+        /* Ajustes para o corpo do card */
+        .details-card-body {
+            display: block !important;
+            page-break-before: avoid !important;
+            break-before: avoid !important;
+        }
+
+        /* Grupo de exame específico */
+        .details-card-body > div:first-child {
+            page-break-before: avoid !important;
+            break-before: avoid !important;
+        }
+
+        /* Subtítulos dos exames */
+        .details-subtitle {
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+            margin-bottom: 8px !important;
+            margin-top: 15px !important;
+        }
+
+        /* Conteúdo da tabela */
+        .risk-content {
+            page-break-before: avoid !important;
+            break-before: avoid !important;
+            page-break-inside: auto !important;
+            break-inside: auto !important;
+            margin-bottom: 15px !important;
+        }
+
+        /* Ajuste específico para o primeiro grupo de exames */
+        .details-card-body h3.details-subtitle:first-of-type {
+            margin-top: 0 !important;
+            page-break-before: avoid !important;
+            break-before: avoid !important;
+        }
+
+        /* Força o agrupamento do primeiro conjunto de exames */
+        .details-card-body > div:first-of-type {
+            page-break-before: avoid !important;
+            break-before: avoid !important;
+        }
+
+        /* Ajustes específicos para impressão */
+        @media print {
+            /* Configurações do corpo */
+            body {
+                font-size: 9pt !important;
+                line-height: 1.2 !important;
+            }
+
+            /* Título principal da função */
+            .function-title {
+                font-size: 14pt !important;
+                margin-bottom: 0.2cm !important;
+            }
+
+            /* Títulos dos cards */
+            .details-card-title {
+                font-size: 12pt !important;
+                margin-bottom: 0.3cm !important;
+            }
+
+            /* Subtítulos */
+            .details-subtitle {
+                font-size: 10pt !important;
+                margin-bottom: 0.2cm !important;
+                margin-top: 0.3cm !important;
+            }
+
+            /* Conteúdo das tabelas */
+            .risk-table th,
+            .risk-table td {
+                font-size: 8pt !important;
+                padding: 0.1cm !important;
+            }
+
+            /* Texto normal e parágrafos */
+            p, span {
+                font-size: 9pt !important;
+                line-height: 1.2 !important;
+            }
+
+            /* Ajuste de margens para melhor aproveitamento do espaço */
+            .details-card {
+                margin-bottom: 0.5cm !important;
+            }
+
+            /* Espaçamento entre seções */
+            .risk-content {
+                margin-bottom: 0.3cm !important;
+            }
+
+            /* CBOs e outros textos secundários */
+            .function-cbo {
+                font-size: 8pt !important;
+            }
+        }
+    }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+    
+
+    <div class="function-header print-section">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <div class="function-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h1 class="function-title">{{ function.name }}</h1>
+                        <p class="function-cbo">CBO: {{ function.cbo }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url "function:details" function.slug %}" class="btn btn-outline-primary return-button ">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+<div class="details-card print-section">
+    <h2 class="details-card-title">
+        <i class="fas fa-tasks me-2"></i>Atividades Especiais Selecionadas
+    </h2>
+    <div class="details-card-body">
+        {% if selected_activities %}
+            <div class="special-activities-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Este relatório inclui os dados da função {{ function.name }} combinados com as atividades especiais selecionadas abaixo.
+            </div>
+        {% endif %}
+        
+        <div class="selected-activities-list">
+            {% if selected_activities %}
+                <ul class="special-activities-selected">
+                    {% for activity in selected_activities %}
+                        <li class="special-activity-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            {{ activity.name }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Nenhuma atividade especial selecionada.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+    <div class="details-content">
+        <div class="row">
+            <div class="col-12">
+                <div class="details-card print-section">
+                    <h2 class="details-card-title">
+                        <i class="fas fa-clipboard-list me-2"></i>Descrição da Função
+                    </h2>
+                    <div class="details-card-body">
+                        <p>{{ function.description }}</p>
+                    </div>
+                </div>
+
+                <div class="details-card print-section">
+                    <h2 class="details-card-title">
+                        <i class="fas fa-stethoscope me-2"></i>Exames Ocupacionais
+                    </h2>
+                    <div class="details-card-body">
+                        <h3 class="details-subtitle">Admissionais</h3>
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Exame</th>
+                                        <th width="40%">Descrição</th>
+                                        <th width="35%">Preparação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for exam in combined_fields.exams_admissional %}
+                                        <tr>
+                                            <td>{{ exam.exam_name }}</td>
+                                            <td>{{ exam.description }}</td>
+                                            <td>{{ exam.preparation }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="details-subtitle">Periódicos</h3>
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Exame</th>
+                                        <th width="40%">Descrição</th>
+                                        <th width="35%">Preparação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for exam in combined_fields.exams_periodic %}
+                                        <tr>
+                                            <td>{{ exam.exam_name }}</td>
+                                            <td>{{ exam.description }}</td>
+                                            <td>{{ exam.preparation }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="details-subtitle">Demissionais</h3>
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Exame</th>
+                                        <th width="40%">Descrição</th>
+                                        <th width="35%">Preparação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for exam in combined_fields.exams_dismissal %}
+                                        <tr>
+                                            <td>{{ exam.exam_name }}</td>
+                                            <td>{{ exam.description }}</td>
+                                            <td>{{ exam.preparation }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="details-subtitle">Retorno ao Trabalho</h3>
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Exame</th>
+                                        <th width="40%">Descrição</th>
+                                        <th width="35%">Preparação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for exam in combined_fields.exams_return_work %}
+                                        <tr>
+                                            <td>{{ exam.exam_name }}</td>
+                                            <td>{{ exam.description }}</td>
+                                            <td>{{ exam.preparation }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="details-subtitle">Mudança de Função</h3>
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Exame</th>
+                                        <th width="40%">Descrição</th>
+                                        <th width="35%">Preparação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for exam in combined_fields.exams_change_function %}
+                                        <tr>
+                                            <td>{{ exam.exam_name }}</td>
+                                            <td>{{ exam.description }}</td>
+                                            <td>{{ exam.preparation }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-card print-section">
+                    <h2 class="details-card-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Riscos Ocupacionais
+                    </h2>
+                    <div class="details-card-body">
+                        
+                        <div class="risk-section">
+                            <h3 class="details-subtitle">Riscos Físicos</h3>
+                            <div class="risk-content print-section">
+                                <table class="table table-bordered risk-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">Tipo de Risco</th>
+                                            <th width="25%">Exposição</th>
+                                            <th width="45%">Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for applied_risk in combined_fields.applied_risks_physical %}
+                                            <tr>
+                                                <td>{{ applied_risk.risk_physical.name }}</td>
+                                                <td>
+                                                    {% for exposition in applied_risk.expositions.all %}
+                                                        {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        Nenhuma
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{{ applied_risk.risk_physical.description }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td> - </td>
+                                                <td> - </td>
+                                                <td> - </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="risk-section">
+                            <h3 class="details-subtitle">Riscos Químicos</h3>
+                            <div class="risk-content print-section">
+                                <table class="table table-bordered risk-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%">Tipo de Risco</th>
+                                            <th width="20%">Tipo</th>
+                                            <th width="25%">Exposição</th>
+                                            <th width="30%">Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for applied_risk in combined_fields.applied_risks_chemical %}
+                                            <tr>
+                                                <td>{{ applied_risk.risk_chemical.name }}</td>
+                                                <td>{{ applied_risk.risk_chemical.type_risk_chemical|default:"-" }}</td>
+                                                <td>
+                                                    {% for exposition in applied_risk.expositions.all %}
+                                                        {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        Nenhuma
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{{ applied_risk.risk_chemical.description }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td> - </td>
+                                                <td> - </td>
+                                                <td> - </td>
+                                                <td> - </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="risk-section">
+                            <h3 class="details-subtitle">Riscos Biológicos</h3>
+                            <div class="risk-content print-section">
+                                <table class="table table-bordered risk-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">Tipo de Risco</th>
+                                            <th width="25%">Exposição</th>
+                                            <th width="45%">Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for applied_risk in combined_fields.applied_risks_biological %}
+                                            <tr>
+                                                <td>{{ applied_risk.risk_biological.name }}</td>
+                                                <td>
+                                                    {% for exposition in applied_risk.expositions.all %}
+                                                        {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        Nenhuma
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{{ applied_risk.risk_biological.description }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td> - </td>
+                                                <td> - </td>
+                                                <td> - </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="risk-section">
+                            <h3 class="details-subtitle">Riscos Ergonômicos</h3>
+                            <div class="risk-content print-section">
+                                <table class="table table-bordered risk-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">Tipo de Risco</th>
+                                            <th width="25%">Exposição</th>
+                                            <th width="45%">Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for applied_risk in combined_fields.applied_risks_ergonomic %}
+                                            <tr>
+                                                <td>{{ applied_risk.risk_ergonomic.name }}</td>
+                                                <td>
+                                                    {% for exposition in applied_risk.expositions.all %}
+                                                        {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        Nenhuma
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{{ applied_risk.risk_ergonomic.description }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td> - </td>
+                                                <td> - </td>
+                                                <td> - </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="risk-section">
+                            <h3 class="details-subtitle">Riscos de Acidentes</h3>
+                            <div class="risk-content print-section">
+                                <table class="table table-bordered risk-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">Tipo de Risco</th>
+                                            <th width="25%">Exposição</th>
+                                            <th width="45%">Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for applied_risk in combined_fields.applied_risks_accident %}
+                                            <tr>
+                                                <td>{{ applied_risk.risk_accident.name }}</td>
+                                                <td>
+                                                    {% for exposition in applied_risk.expositions.all %}
+                                                        {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        Nenhuma
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{{ applied_risk.risk_accident.description }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td> - </td>
+                                                <td> - </td>
+                                                <td> - </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-card print-section">
+                    <h2 class="details-card-title">
+                        <i class="fas fa-hard-hat me-2"></i>EPIs
+                    </h2>
+                    <div class="details-card-body">
+                        {% if function.epi_mandatory %}
+                            <div class="epi-status-tag mb-3">
+                                <span class="status-badge">{{ function.epi_mandatory }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">EPI</th>
+                                        <th width="30%">Tipo de EPI</th>
+                                        <th width="45%">Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for epi in combined_fields.epis %}
+                                        <tr>
+                                            <td>{{ epi.name }}</td>
+                                            <td>{{ epi.type_epi }}</td>
+                                            <td>{{ epi.description }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-card print-section">
+                    <h2 class="details-card-title">
+                        <i class="fas fa-graduation-cap me-2"></i>Treinamentos Necessários
+                    </h2>
+                    <div class="details-card-body">
+                        <div class="risk-content print-section">
+                            <table class="table table-bordered risk-table">
+                                <thead>
+                                    <tr>
+                                        <th width="40%">Treinamento</th>
+                                        <th width="60%">Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for training in combined_fields.trainings %}
+                                        <tr>
+                                            <td>{{ training.name }}</td>
+                                            <td>{{ training.description }}</td>
+                                        </tr>
+                                    {% empty %} 
+                                        <tr>
+                                            <td> - </td>
+                                            <td> - </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons mt-4 mb-5">
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'function:details' function.slug %}" class="btn-voltar">
+                            <i class="fas fa-arrow-left me-1"></i>Voltar
+                        </a>
+                        <button id="print-report" class="btn btn-success btn-sm" style="white-space: nowrap;">
+                            <i class="fas fa-print me-1"></i>Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('print-report').addEventListener('click', function() {
+            // Adiciona classe para controle de impressão
+            document.body.classList.add('printing');
+            
+            // Configura o título do documento para impressão
+            const originalTitle = document.title;
+            document.title = '{{ function.name }} - Relatório Ocupacional';
+            
+            // Executa a impressão
+            window.print();
+            
+            // Restaura o estado original
+            setTimeout(() => {
+                document.title = originalTitle;
+                document.body.classList.remove('printing');
+            }, 100);
+        });
+    </script>
+{% endblock content %}
+
+
+{% block scripts %}
+    {# Adicionar JS específico para esta página, se necessário #}
+    <script>
+        console.log("Página de DETALHES carregada!");
+    </script>
+{% endblock scripts %}

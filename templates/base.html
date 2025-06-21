@@ -1,0 +1,52 @@
+{% load static %}
+
+<html lang="pt-BR">
+
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    {# Bloco para o título da página, com um título padrão #}
+    <title>{% block title %}Sistema Interno - Clínica de Medicina do Trabalho{% endblock title %}</title> 
+    
+    {# Links CSS e Meta Tags #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'custom/style.css' %}"> {# Assumindo que seu static esteja configurado corretamente #}
+    <link rel="stylesheet" href="{% static 'custom/style.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'custom/style.css' %}" media="print">
+
+    {# Bloco para adicionar CSS ou outras tags <head> específicas da página #}
+    {% block extra_head %}{% endblock extra_head %} 
+
+</head>
+
+<body>
+
+    {# Inclui o partial do header #}
+    {% include 'partials/_header.html' %}
+
+    {# Bloco principal onde o conteúdo específico de cada página será inserido #}
+    <main class="container mt-4">
+        {% block content %}
+        {# O conteúdo específico da página (como os cards e paginação) virá aqui nos templates filhos #}
+        {% endblock content %}
+
+        {% block pagination %}
+        {# Conteúdo para paginação. #}
+        {% endblock pagination %}
+    </main>
+
+    {# Inclui o partial do footer #}
+    {% include 'partials/_footer.html' %}
+
+    {# Bootstrap JS (e dependências, se necessário) - Adicionado aqui para melhor performance #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    {# Bloco para adicionar Javascript específico da página #}
+    {% block scripts %}{% endblock scripts %} 
+
+</body>
+
+</html>

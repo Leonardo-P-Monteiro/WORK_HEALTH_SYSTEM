@@ -1,0 +1,76 @@
+{% comment %} Código completo atualizado em 2025-04-24 {% endcomment %}
+{% if is_paginated %}
+    <div class="pagination-container">
+        <ul class="pagination">
+            {% comment %} Botão Anterior {% endcomment %}
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}" aria-label="Anterior">
+                        <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Anterior" tabindex="-1" aria-disabled="true">
+                        <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% comment %} Primeira Página e Elipse Inicial {% endcomment %}
+            {% comment %} Mostra link para página 1 se a página atual for maior que 3 {% endcomment %}
+            {% if page_obj.number > 3 %}
+                <li class="page-item"><a class="page-link" href="?page=1&q={{ q }}">1</a></li>
+                {% comment %} Mostra elipse se a página atual for maior que 4 (espaço entre 1 e a janela) {% endcomment %}
+                {% if page_obj.number > 4 %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endif %}
+
+            {% comment %} Números de Página Centrais (Janela) {% endcomment %}
+            {% for i in page_obj.paginator.page_range %}
+                {% comment %} Condição para exibir a janela: 2 antes, atual, 2 depois {% endcomment %}
+                {% if i >= page_obj.number|add:-2 and i <= page_obj.number|add:2 %}
+                    {% if page_obj.number == i %}
+                        {% comment %} Página atual - marca como ativa {% endcomment %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ i }}&q={{ q }}">{{ i }} <span class="sr-only">(atual)</span></a>
+                        </li>
+                    {% else %}
+                        {% comment %} Outras páginas na janela {% endcomment %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}&q={{ q }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% comment %} Verifica se a última página está além da janela de +2 e da página seguinte a ela (precisa de elipse) {% endcomment %}
+            {% if page_obj.paginator.num_pages > page_obj.number|add:3 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+
+            {% comment %} Verifica se a última página está fora da janela de +2 (precisa do link final) {% endcomment %}
+            {% if page_obj.paginator.num_pages > page_obj.number|add:2 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&q={{ q }}">
+                        {{ page_obj.paginator.num_pages }}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% comment %} Botão Próximo {% endcomment %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}" aria-label="Próximo">
+                        <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Próximo" tabindex="-1" aria-disabled="true">
+                        <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+{% endif %}

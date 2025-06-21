@@ -1,0 +1,543 @@
+{% extends "base.html" %} {# Estende o template base para manter a estrutura do site #}
+{% load static %} {# Carrega tags estáticas para usar arquivos CSS/JS #}
+
+{# Define o título da página #}
+{% block title %}Compêndio de Funções | Sistema Interno{% endblock title %}
+
+{% block content %}
+    {# Cabeçalho da página de compêndio, seguindo o padrão de details.html #}
+    <div class="function-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <div class="function-icon">
+                        <i class="fas fa-book"></i> {# Ícone de livro para o compêndio #}
+                    </div>
+                    <div>
+                        <h1 class="function-title">Compêndio de Funções</h1>
+                        <p class="function-cbo">Lista completa de todas as funções cadastradas.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {# Botão para voltar à página anterior #}
+                <a href="javascript:history.back()" class="btn btn-outline-primary return-button">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar
+                </a>
+                {# Botão para imprimir a página #}
+                {% comment %} <a id="print-report" class="btn btn-primary generate-report-btn ms-2" target="_blank">
+                    <i class="fas fa-file-pdf me-2"></i>Gerar PDF
+                </a> {% endcomment %}
+            </div>
+        </div>
+    </div>
+
+    {# Conteúdo principal onde as funções serão listadas #}
+    <div class="details-content">
+        {% if functions %} {# Verifica se existem funções para exibir #}
+            {% for function in functions %} {# Itera sobre cada objeto Function retornado pela view #}
+                {# Cada função será exibida dentro de um "details-card", replicando o estilo do details.html #}
+                {# 'mb-4' adiciona margem inferior para separar visualmente as funções #}
+                <div class="details-card mb-4" id="function-{{ function.slug }}">
+                    {# Título do card da função, mostrando nome e CBO #}
+                    <h2 class="details-card-title">
+                        <i class="fas fa-user me-2"></i>{{ function.name }}
+                        {% if function.cbo %}(CBO: {{ function.cbo }}){% endif %}
+                    </h2>
+                    <div class="details-card-body">
+                        {# Seção: Descrição da Função #}
+                        {# 'border-0 shadow-none bg-transparent' remove estilos para evitar aninhamento visual excessivo #}
+                        <div class="details-card mb-3 border-0 shadow-none bg-transparent">
+                            <h3 class="details-subtitle">
+                                <i class="fas fa-clipboard-list me-2"></i>Descrição
+                            </h3>
+                            <div class="risk-content">
+                                <p>{{ function.description|default:"Nenhuma descrição disponível." }}</p>
+                            </div>
+                        </div>
+
+                        {# Seção: Exames Ocupacionais #}
+                        <div class="details-card mb-3 border-0 shadow-none bg-transparent">
+                            <h3 class="details-subtitle">
+                                <i class="fas fa-stethoscope me-2"></i>Exames Ocupacionais
+                            </h3>
+                            <div class="details-card-body p-0"> {# Removendo padding para evitar duplicidade de espaçamento #}
+                                {# Subseção: Exames Admissionais #}
+                                <h4 class="details-subtitle mt-2">Admissionais</h4>
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Exame</th>
+                                                <th width="40%">Descrição</th>
+                                                <th width="35%">Preparação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for exam in function.exams_admissional.all %}
+                                                <tr>
+                                                    <td>{{ exam.exam_name }}</td>
+                                                    <td>{{ exam.description|default:"-" }}</td>
+                                                    <td>{{ exam.preparation|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {# Subseção: Exames Periódicos #}
+                                <h4 class="details-subtitle mt-2">Periódicos</h4>
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Exame</th>
+                                                <th width="40%">Descrição</th>
+                                                <th width="35%">Preparação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for exam in function.exams_periodic.all %}
+                                                <tr>
+                                                    <td>{{ exam.exam_name }}</td>
+                                                    <td>{{ exam.description|default:"-" }}</td>
+                                                    <td>{{ exam.preparation|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {# Subseção: Exames Demissionais #}
+                                <h4 class="details-subtitle mt-2">Demissionais</h4>
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Exame</th>
+                                                <th width="40%">Descrição</th>
+                                                <th width="35%">Preparação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for exam in function.exams_dismissal.all %}
+                                                <tr>
+                                                    <td>{{ exam.exam_name }}</td>
+                                                    <td>{{ exam.description|default:"-" }}</td>
+                                                    <td>{{ exam.preparation|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {# Subseção: Exames de Retorno ao Trabalho #}
+                                <h4 class="details-subtitle mt-2">Retorno ao Trabalho</h4>
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Exame</th>
+                                                <th width="40%">Descrição</th>
+                                                <th width="35%">Preparação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for exam in function.exams_return_work.all %}
+                                                <tr>
+                                                    <td>{{ exam.exam_name }}</td>
+                                                    <td>{{ exam.description|default:"-" }}</td>
+                                                    <td>{{ exam.preparation|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {# Subseção: Exames de Mudança de Função #}
+                                <h4 class="details-subtitle mt-2">Mudança de Função</h4>
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Exame</th>
+                                                <th width="40%">Descrição</th>
+                                                <th width="35%">Preparação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for exam in function.exams_change_function.all %}
+                                                <tr>
+                                                    <td>{{ exam.exam_name }}</td>
+                                                    <td>{{ exam.description|default:"-" }}</td>
+                                                    <td>{{ exam.preparation|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Seção: Riscos Ocupacionais #}
+                        <div class="details-card mb-3 border-0 shadow-none bg-transparent">
+                            <h3 class="details-subtitle">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Riscos Ocupacionais
+                            </h3>
+                            <div class="details-card-body p-0">
+                                {# Subseção: Riscos Físicos #}
+                                <div class="risk-section">
+                                    <h4 class="details-subtitle mt-2">Riscos Físicos</h4>
+                                    <div class="risk-content">
+                                        <table class="table table-bordered risk-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="30%">Tipo de Risco</th>
+                                                    <th width="25%">Exposição</th>
+                                                    <th width="45%">Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for applied_risk in function.applied_risks_physical.all %}
+                                                    <tr>
+                                                        <td>{{ applied_risk.risk_physical.name }}</td>
+                                                        <td>
+                                                            {% for exposition in applied_risk.expositions.all %}
+                                                                {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                            {% empty %}
+                                                                Nenhuma
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>{{ applied_risk.risk_physical.description|default:"-" }}</td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {# Subseção: Riscos Químicos #}
+                                <div class="risk-section">
+                                    <h4 class="details-subtitle mt-2">Riscos Químicos</h4>
+                                    <div class="risk-content">
+                                        <table class="table table-bordered risk-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="25%">Tipo de Risco</th>
+                                                    <th width="20%">Tipo</th>
+                                                    <th width="25%">Exposição</th>
+                                                    <th width="30%">Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for applied_risk in function.applied_risks_chemical.all %}
+                                                    <tr>
+                                                        <td>{{ applied_risk.risk_chemical.name }}</td>
+                                                        <td>{{ applied_risk.risk_chemical.type_risk_chemical|default:"-" }}</td>
+                                                        <td>
+                                                            {% for exposition in applied_risk.expositions.all %}
+                                                                {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                            {% empty %}
+                                                                Nenhuma
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>{{ applied_risk.risk_chemical.description|default:"-" }}</td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {# Subseção: Riscos Biológicos #}
+                                <div class="risk-section">
+                                    <h4 class="details-subtitle mt-2">Riscos Biológicos</h4>
+                                    <div class="risk-content">
+                                        <table class="table table-bordered risk-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="30%">Tipo de Risco</th>
+                                                    <th width="25%">Exposição</th>
+                                                    <th width="45%">Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for applied_risk in function.applied_risks_biological.all %}
+                                                    <tr>
+                                                        <td>{{ applied_risk.risk_biological.name }}</td>
+                                                        <td>
+                                                            {% for exposition in applied_risk.expositions.all %}
+                                                                {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                            {% empty %}
+                                                                Nenhuma
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>{{ applied_risk.risk_biological.description|default:"-" }}</td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {# Subseção: Riscos Ergonômicos #}
+                                <div class="risk-section">
+                                    <h4 class="details-subtitle mt-2">Riscos Ergonômicos</h4>
+                                    <div class="risk-content">
+                                        <table class="table table-bordered risk-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="30%">Tipo de Risco</th>
+                                                    <th width="25%">Exposição</th>
+                                                    <th width="45%">Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for applied_risk in function.applied_risks_ergonomic.all %}
+                                                    <tr>
+                                                        <td>{{ applied_risk.risk_ergonomic.name }}</td>
+                                                        <td>
+                                                            {% for exposition in applied_risk.expositions.all %}
+                                                                {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                            {% empty %}
+                                                                Nenhuma
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>{{ applied_risk.risk_ergonomic.description|default:"-" }}</td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {# Subseção: Riscos de Acidentes #}
+                                <div class="risk-section">
+                                    <h4 class="details-subtitle mt-2">Riscos de Acidentes</h4>
+                                    <div class="risk-content">
+                                        <table class="table table-bordered risk-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="30%">Tipo de Risco</th>
+                                                    <th width="25%">Exposição</th>
+                                                    <th width="45%">Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for applied_risk in function.applied_risks_accident.all %}
+                                                    <tr>
+                                                        <td>{{ applied_risk.risk_accident.name }}</td>
+                                                        <td>
+                                                            {% for exposition in applied_risk.expositions.all %}
+                                                                {{ exposition.name }}{% if not forloop.last %}, {% endif %}
+                                                            {% empty %}
+                                                                Nenhuma
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>{{ applied_risk.risk_accident.description|default:"-" }}</td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                        <td> - </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Seção: EPIs #}
+                        <div class="details-card mb-3 border-0 shadow-none bg-transparent">
+                            <h3 class="details-subtitle">
+                                <i class="fas fa-hard-hat me-2"></i>EPIs
+                            </h3>
+                            <div class="details-card-body p-0">
+                                {% if function.epi_mandatory %}
+                                    <div class="epi-status-tag mb-3">
+                                        <span class="status-badge">{{ function.epi_mandatory }}</span>
+                                    </div>
+                                {% endif %}
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">EPI</th>
+                                                <th width="30%">Tipo de EPI</th>
+                                                <th width="45%">Descrição</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for epi in function.epis.all %}
+                                                <tr>
+                                                    <td>{{ epi.name }}</td>
+                                                    <td>{{ epi.type_epi|default:"-" }}</td>
+                                                    <td>{{ epi.description|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Seção: Treinamentos Necessários #}
+                        <div class="details-card mb-3 border-0 shadow-none bg-transparent">
+                            <h3 class="details-subtitle">
+                                <i class="fas fa-graduation-cap me-2"></i>Treinamentos Necessários
+                            </h3>
+                            <div class="details-card-body p-0">
+                                <div class="risk-content">
+                                    <table class="table table-bordered risk-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%">Treinamento</th>
+                                                <th width="60%">Descrição</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for training in function.trainings.all %}
+                                                <tr>
+                                                    <td>{{ training.name }}</td>
+                                                    <td>{{ training.description|default:"-" }}</td>
+                                                </tr>
+                                            {% empty %} 
+                                                <tr>
+                                                    <td> - </td>
+                                                    <td> - </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Seção: Atividades Especiais #}
+                        <div class="details-card mb-3 border-0 shadow-none bg-transparent">
+                            <h3 class="details-subtitle">
+                                <i class="fas fa-tasks me-2"></i>Atividades Especiais Que Podem Ser Associadas
+                            </h3>
+                            <div class="details-card-body p-0">
+                                <div class="special-activities-list d-block"> {# Usa 'd-block' para garantir que os itens fiquem em lista vertical #}
+                                    {% if function.special_activities %}
+                                        <ul>
+                                            {% for special_activity in function.special_activities.all %}
+                                                <li>{{ special_activity.name }}</li>
+                                            {% empty %}
+                                                <li>Nenhuma atividade especial associada.</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>Nenhuma atividade especial associada.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        {% else %} {# Caso não haja funções cadastradas #}
+            {% include "function/partials/_noresults.html" %}
+            <p class="text-center mt-3">Nenhuma função cadastrada para exibir no compêndio.</p>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script>
+        console.log("Página de Compêndio de Funções carregada!");
+        // Script para adicionar a classe 'printing' ao body durante a impressão
+        window.onbeforeprint = function() {
+            document.body.classList.add('printing');
+        };
+        window.onafterprint = function() {
+            document.body.classList.remove('printing');
+        };
+        
+
+        document.getElementById('print-report').addEventListener('click', function() {
+            // Adiciona classe para controle de impressão
+            document.body.classList.add('printing');
+            
+            // Configura o título do documento para impressão
+            const originalTitle = document.title;
+            document.title = 'Compêndio de Funções - Relatório Ocupacional';
+            
+            // Executa a impressão
+            window.print();
+            
+            // Restaura o estado original
+            setTimeout(() => {
+                document.title = originalTitle;
+                document.body.classList.remove('printing');
+            }, 100);
+        });
+    </script>
+{% endblock scripts %}

@@ -1,0 +1,92 @@
+{% load static %}
+
+<html lang="pt-BR">
+
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Login | Sistema de Saúde Ocupacional</title> 
+    
+    {# Links CSS e Meta Tags #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'custom/style.css' %}"> {# Assumindo que seu static esteja configurado corretamente #}
+    <link rel="stylesheet" href="{% static 'custom/style.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'custom/style.css' %}" media="print">
+
+
+
+</head>
+
+<body>
+
+
+
+    {# Bloco principal onde o conteúdo específico de cada página será inserido #}
+    <main class="container mt-4">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img class="navbar-logo" src="{% static 'images/acesso_logo.webp' %}" alt="Logo da Empresa">
+                    <h1 class="login-title">Acesso ao Sistema</h1>
+                </div>
+                
+                <div class="login-form-container">
+                    <form method="post" action="{% url 'function:login' %}" class="login-form">
+                        {% csrf_token %}
+                        
+                        {% if error_message %}
+                        <div class="login-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>{{ error_message }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if success_message %}
+                        <div class="login-success">
+                            <i class="fas fa-check-circle"></i>
+                            <span>{{ success_message }}</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="username">
+                                <i class="fas fa-user input-icon"></i>
+                                Usuário
+                            </label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Digite seu nome de usuário" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">
+                                <i class="fas fa-lock input-icon"></i>
+                                Senha
+                            </label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Entrar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {# Bootstrap JS (e dependências, se necessário) - Adicionado aqui para melhor performance #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Adicionar foco automático no campo de usuário quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').focus();
+        });
+    </script>
+    
+</body>
+
+</html>
