@@ -2,13 +2,13 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container navbar-container">
         <a class="navbar-brand" href="#">
-            <img class="navbar-logo" src="{% static 'images/acesso_logo.webp' %}" alt="Logo da Empresa">
+            <img class="navbar-logo" src="{% static 'images/logo_leepcode.png' %}" alt="Logo da Empresa">
         </a>
         
         <div class="navbar-links">
             {# Substituir '#' pelos URLs corretos usando {% url 'nome_da_url' %} #}
             <a class="nav-link" href="{% url "function:home" %}">Página Inicial</a> 
-            <a class="nav-link" href="https://www.acessonacional.com.br/">Site Institucional</a> 
+            <a class="nav-link" href="https://www.leepcode.com.br/">Site Institucional</a> 
             <a class="nav-link" href="{% url "function:logout" %}">Logout</a> 
             <a class="nav-link" href="{% url "function:home" %}"> Usuário logado: {{ user.username }}</a> 
         </div>
