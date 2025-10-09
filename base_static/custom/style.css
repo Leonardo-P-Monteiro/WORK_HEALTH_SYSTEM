@@ -94,7 +94,14 @@ body {
 
 /* Estilo para o logo na navbar */
 .navbar-logo {
-    height: 100px; /* altura fixa */
+    height: auto; /* altura fixa */
+    width: 100%; /* mantém a proporção */
+    object-fit: contain; /* garante que a imagem não fique distorcida */
+    background-color: #ffffff;
+  }
+
+.navbar-logo2 {
+    height: 80px; /* altura fixa */
     width: auto; /* mantém a proporção */
     object-fit: contain; /* garante que a imagem não fique distorcida */
     background-color: #ffffff;
